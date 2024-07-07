@@ -1,5 +1,10 @@
 import debounce from '../../../utils/debounce';
-import { WebViewMessage, WebViewMessageType, WebViewResponse } from '../../messaging';
+import {
+	NoteSearchResult,
+	WebViewMessage,
+	WebViewMessageType,
+	WebViewResponse,
+} from '../../messaging';
 import makeLabeledInput from './makeLabeledInput';
 import makeSuggestionList from './makeSuggestionList';
 
@@ -10,6 +15,7 @@ declare const webviewApi: WebViewAPI;
 
 const makeNoteInput = (onAccept: (id: string) => void) => {
 	const container = document.createElement('div');
+	container.classList.add('note-picker');
 
 	const { container: pickNoteContainer, input: pickNoteInput } = makeLabeledInput(
 		'Search:',
@@ -17,7 +23,14 @@ const makeNoteInput = (onAccept: (id: string) => void) => {
 	);
 	const { container: searchResultContainer, setSuggestions } = makeSuggestionList(onAccept);
 
+	let defaultSuggestions: NoteSearchResult[] = [];
+
 	pickNoteInput.oninput = debounce(async () => {
+		if (!pickNoteInput.value) {
+			setSuggestions(defaultSuggestions, null);
+			return;
+		}
+
 		const noteData = await webviewApi.postMessage({
 			type: WebViewMessageType.SearchNotes,
 			query: pickNoteInput.value,
@@ -26,20 +39,19 @@ const makeNoteInput = (onAccept: (id: string) => void) => {
 		let cursor = noteData.cursor;
 		const loadMoreResults = async () => {
 			const results = await webviewApi.postMessage({
-				type: WebViewMessageType.GetMoreResults,
+				type: WebViewMessageType.SearchNotes,
+				query: pickNoteInput.value,
 				cursor,
 			});
-			return results!.results;
+			cursor = results.cursor;
+			return results.results;
 		};
 
-		setSuggestions(noteData.results, loadMoreResults);
+		setSuggestions(noteData.results, noteData.hasMore ? loadMoreResults : null);
 	}, 300);
 
-	const suggestionContainer = document.createElement('div');
-	suggestionContainer.classList.add('note-suggestions');
-
 	void (async () => {
-		const defaultSuggestions = (await webviewApi.postMessage({
+		defaultSuggestions = (await webviewApi.postMessage({
 			type: WebViewMessageType.GetDefaultSuggestions,
 		}))!.results;
 		setSuggestions(defaultSuggestions, null);

@@ -40,6 +40,22 @@ joplin.plugins.register({
 			return null;
 		});
 
+		const showDiffWith = async (noteId: string | null) => {
+			let diffContent: string | null;
+			if (noteId) {
+				await joplin.data.userDataSet(ModelType.Note, selectedNoteId, 'diff-with', noteId);
+				const note = await joplin.data.get(['notes', noteId], { fields: ['body'] });
+				diffContent = note.body;
+			} else {
+				await joplin.data.userDataDelete(ModelType.Note, selectedNoteId, 'diff-with');
+				diffContent = null;
+			}
+			await joplin.commands.execute('editor.execCommand', {
+				name: 'cm6-show-diff-with',
+				args: [diffContent],
+			});
+		};
+
 		await joplin.commands.register({
 			name: 'showDiffWithNote',
 			label: 'Compare the current note with another',
@@ -48,21 +64,12 @@ joplin.plugins.register({
 				if (!selectedNoteId) return;
 
 				const noteId = await pickNote();
-				if (!selectedNoteId) {
+				if (!selectedNoteId || noteId === null) {
 					console.warn('No note selected.');
 					return;
 				}
-				if (!noteId) {
-					await joplin.data.userDataDelete(ModelType.Note, selectedNoteId, 'diff-with');
-					return;
-				}
 
-				await joplin.data.userDataSet(ModelType.Note, selectedNoteId, 'diff-with', noteId);
-				const note = await joplin.data.get(['notes', noteId], { fields: ['body'] });
-				await joplin.commands.execute('editor.execCommand', {
-					name: 'cm6-show-diff-with',
-					args: [note.body],
-				});
+				await showDiffWith(noteId);
 			},
 		});
 		await joplin.views.toolbarButtons.create(

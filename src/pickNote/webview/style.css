@@ -1,0 +1,67 @@
+#joplin-plugin-content,
+body {
+	width: 600px;
+	height: 400px;
+	max-width: 100vw;
+
+	/* Work around a bug related to non-overlay scrollbars and dialog sizing. */
+	scrollbar-width: none;
+}
+
+.main-content {
+	display: flex;
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+.suggestion-list {
+	> .list {
+		padding: 2px;
+		padding-left: 2px;
+		list-style-type: none;
+	}
+
+	> .more {
+		margin-left: auto;
+		margin-right: auto;
+		display: none;
+	}
+
+	&.-hasMore {
+		> .more {
+			display: block;
+		}
+	}
+}
+
+.search-suggestion {
+	border: 2px solid transparent;
+	border-radius: 3px;
+	padding: 4px;
+	cursor: pointer;
+
+	transition: 0.1s ease border;
+
+	&.-accepted {
+		border-color: var(--joplin-code-border-color);
+	}
+
+	> .description {
+		font-style: italic;
+		opacity: 0.9;
+	}
+}
+
+.search-suggestion-option {
+	> label {
+		flex-grow: 1;
+	}
+
+	> input {
+		appearance: none;
+	}
+
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}

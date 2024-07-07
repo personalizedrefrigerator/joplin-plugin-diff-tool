@@ -7,9 +7,13 @@ type WebViewAPI = {
 declare const webviewApi: WebViewAPI;
 
 (() => {
+	const container = document.createElement('div');
+	container.classList.add('main-content');
+
 	const noteInput = makeNoteInput((id) => {
 		webviewApi.postMessage({ type: WebViewMessageType.OnNoteSelected, noteId: id });
 	});
 
-	(document.querySelector('#joplin-plugin-content') ?? document.body).appendChild(noteInput);
+	container.replaceChildren(noteInput);
+	(document.querySelector('#joplin-plugin-content') ?? document.body).appendChild(container);
 })();

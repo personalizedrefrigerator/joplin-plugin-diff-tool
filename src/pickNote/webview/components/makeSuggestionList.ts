@@ -14,6 +14,7 @@ const makeSuggestionList = (onSuggestionAccept: OnSuggestionAccept) => {
 
 	container.classList.add('suggestion-list');
 	loadMoreLink.classList.add('more');
+	suggestionList.classList.add('list');
 
 	const radioGroupId = `suggestion-radio-option-${idCounter++}`;
 	let acceptedSuggestionContainer: HTMLElement | null = null;
@@ -21,8 +22,11 @@ const makeSuggestionList = (onSuggestionAccept: OnSuggestionAccept) => {
 	const addSuggestions = (suggestions: NoteSearchResult[]) => {
 		for (const suggestion of suggestions) {
 			const suggestionContainer = document.createElement('li');
+			suggestionContainer.classList.add('search-suggestion');
 
 			const suggestionRadio = makeLabeledInput(suggestion.title, 'radio');
+			suggestionRadio.container.classList.add('search-suggestion-option');
+
 			suggestionRadio.input.name = radioGroupId;
 			suggestionRadio.input.oninput = () => {
 				if (acceptedSuggestionContainer) {
@@ -34,11 +38,16 @@ const makeSuggestionList = (onSuggestionAccept: OnSuggestionAccept) => {
 				onSuggestionAccept(suggestion.id);
 			};
 
+			suggestionContainer.onclick = () => {
+				suggestionRadio.input.click();
+			};
+
 			const descriptionElement = document.createElement('div');
+			descriptionElement.classList.add('description');
 			descriptionElement.textContent = suggestion.description;
 
 			suggestionContainer.replaceChildren(suggestionRadio.container, descriptionElement);
-			container.appendChild(suggestionContainer);
+			suggestionList.appendChild(suggestionContainer);
 		}
 	};
 

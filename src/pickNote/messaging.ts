@@ -8,11 +8,7 @@ export enum WebViewMessageType {
 interface SearchNotesMessage {
 	type: WebViewMessageType.SearchNotes;
 	query: string;
-}
-
-interface GetMoreResultsMessage {
-	type: WebViewMessageType.GetMoreResults;
-	cursor: number;
+	cursor?: number;
 }
 
 interface GetDefaultSuggestionsMessage {
@@ -24,11 +20,7 @@ interface OnNoteSelected {
 	noteId: string;
 }
 
-export type WebViewMessage =
-	| SearchNotesMessage
-	| GetDefaultSuggestionsMessage
-	| GetMoreResultsMessage
-	| OnNoteSelected;
+export type WebViewMessage = SearchNotesMessage | GetDefaultSuggestionsMessage | OnNoteSelected;
 
 export enum WebViewResponseType {
 	NoteList = 'noteList',

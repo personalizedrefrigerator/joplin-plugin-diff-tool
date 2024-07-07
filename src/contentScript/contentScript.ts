@@ -25,6 +25,11 @@ export default (context: ContentScriptContext): MarkdownEditorContentScriptModul
 			};
 
 			editorControl.registerCommand('cm6-show-diff-with', (itemContent: string | null) => {
+				if (itemContent !== null) {
+					// The merge view needs to be cleared before it can be used again.
+					updateMergeView(null);
+				}
+
 				updateMergeView(itemContent);
 			});
 			updateMergeView(await context.postMessage('getMergeContent'));
