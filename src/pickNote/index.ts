@@ -61,9 +61,9 @@ const pickNote = async () => {
 	);
 
 	await joplin.views.dialogs.setButtons(dialog, [{ title: 'Cancel', id: 'cancel' }]);
-	const wasCancelled = !(await joplin.views.dialogs.open(dialog));
+	const dialogOpenResult = await joplin.views.dialogs.open(dialog);
 
-	return wasCancelled ? null : result;
+	return dialogOpenResult.id === 'cancel' ? null : result;
 };
 
 export default pickNote;

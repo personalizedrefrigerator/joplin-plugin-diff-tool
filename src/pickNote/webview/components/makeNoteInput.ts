@@ -17,10 +17,11 @@ const makeNoteInput = (onAccept: (id: string) => void) => {
 	const container = document.createElement('div');
 	container.classList.add('note-picker');
 
-	const { container: pickNoteContainer, input: pickNoteInput } = makeLabeledInput(
+	const { container: searchInputContainer, input: pickNoteInput } = makeLabeledInput(
 		'Search:',
 		'text',
 	);
+	searchInputContainer.classList.add('search');
 	const { container: searchResultContainer, setSuggestions } = makeSuggestionList(onAccept);
 
 	let defaultSuggestions: NoteSearchResult[] = [];
@@ -57,7 +58,7 @@ const makeNoteInput = (onAccept: (id: string) => void) => {
 		setSuggestions(defaultSuggestions, null);
 	})();
 
-	container.replaceChildren(pickNoteContainer, searchResultContainer);
+	container.replaceChildren(searchInputContainer, searchResultContainer);
 	return container;
 };
 
