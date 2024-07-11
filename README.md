@@ -18,14 +18,16 @@ This plugin does not support the Rich Text Editor.
 
 This plugin adds a "compare" button to the desktop and mobile markdown toolbars.
 
-To compare the current note with another:
+### To compare the current note with another:
 
 1. Click "compare" (<img alt="branch icon" src="./images/compare-button.png" width="32"/>).
 2. Search for a note ID, note title, or content.
    - The search bar supports the same search syntax as Joplin.
 3. Click "OK".
 
-To stop comparing with another note:
+Joplin syncs the ID of the note to be compared with between devices.
+
+### To stop comparing with another note:
 
 1. Click "compare" (<img alt="branch icon" src="./images/compare-button.png" width="32"/>).
 2. Click "None".  
