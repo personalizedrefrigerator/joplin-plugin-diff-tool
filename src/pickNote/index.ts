@@ -8,6 +8,7 @@ import {
 } from './messaging';
 import { ViewHandle } from 'api/types';
 import noteLinkToId from '../utils/noteLinkToId';
+import localization from '../localization';
 
 let dialogHandle: ViewHandle | null = null;
 const pickNote = async (currentNoteId?: string) => {
@@ -72,7 +73,11 @@ const pickNote = async (currentNoteId?: string) => {
 				};
 			} else if (message.type === WebViewMessageType.GetDefaultSuggestions) {
 				const defaultChoices: NoteSearchResult[] = [
-					{ title: 'None', id: '', description: 'Chooses no notes.' },
+					{
+						title: localization.noteSelect__none,
+						id: '',
+						description: localization.noteSelect__chooseNoNotes,
+					},
 				];
 
 				// Include original notes, if a conflict.
@@ -87,7 +92,7 @@ const pickNote = async (currentNoteId?: string) => {
 							defaultChoices.push({
 								title: original.title,
 								id: original.id,
-								description: 'Original note for this conflict.',
+								description: localization.noteSelect__conflictOriginalNote,
 							});
 						}
 					}
@@ -102,7 +107,9 @@ const pickNote = async (currentNoteId?: string) => {
 		},
 	);
 
-	await joplin.views.dialogs.setButtons(dialog, [{ title: 'Cancel', id: 'cancel' }]);
+	await joplin.views.dialogs.setButtons(dialog, [
+		{ title: localization.noteSelect__cancel, id: 'cancel' },
+	]);
 	const dialogOpenResult = await joplin.views.dialogs.open(dialog);
 
 	return dialogOpenResult.id === 'cancel' ? null : result;

@@ -1,3 +1,4 @@
+import localization from '../../../localization';
 import debounce from '../../../utils/debounce';
 import {
 	NoteSearchResult,
@@ -18,7 +19,7 @@ const makeNoteInput = (onAccept: (id: string) => void) => {
 	container.classList.add('note-picker');
 
 	const { container: searchInputContainer, input: pickNoteInput } = makeLabeledInput(
-		'Search:',
+		localization.noteSearch__search,
 		'text',
 	);
 	searchInputContainer.classList.add('search');

@@ -1,9 +1,22 @@
 interface AppLocalization {
 	noteSearch__loadMore: string;
+	noteSearch__search: string;
+	noteSelect__none: string;
+	noteSelect__chooseNoNotes: string;
+	noteSelect__conflictOriginalNote: string;
+	noteSelect__cancel: string;
+	betaWarning: string;
 }
 
 const defaultStrings: AppLocalization = {
 	noteSearch__loadMore: 'Load more',
+	noteSearch__search: 'Search:',
+	noteSelect__none: 'None',
+	noteSelect__chooseNoNotes: 'Chooses no notes.',
+	noteSelect__conflictOriginalNote: 'Chooses no notes.',
+	noteSelect__cancel: 'Cancel',
+	betaWarning:
+		'Warning: Due to occasional crashes related to @codemirror/merge, this plugin is considered to be in beta.',
 };
 
 const localizations: Record<string, AppLocalization> = {
@@ -11,6 +24,8 @@ const localizations: Record<string, AppLocalization> = {
 
 	es: {
 		...defaultStrings,
+		noteSearch__search: 'Buscar:',
+		noteSelect__cancel: 'Cancelar',
 	},
 };
 
