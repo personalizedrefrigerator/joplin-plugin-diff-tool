@@ -1,5 +1,5 @@
 import { ContentScriptContext, MarkdownEditorContentScriptModule } from 'api/types';
-import { Compartment } from '@codemirror/state';
+import { Compartment, EditorState, Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { unifiedMergeView } from '@codemirror/merge';
 
@@ -12,13 +12,18 @@ export default (context: ContentScriptContext): MarkdownEditorContentScriptModul
 			const diffExtensionCompartment = new Compartment();
 			editorControl.addExtension([diffExtensionCompartment.of([])]);
 
+			const makeMergeExtension = (originalItemContent: string): Extension => {
+				return [
+					unifiedMergeView({
+						original: originalItemContent,
+					}),
+				];
+			};
+
 			const updateMergeView = (originalItemContent: string | null) => {
 				const mergeExtension =
-					originalItemContent !== null
-						? unifiedMergeView({
-								original: originalItemContent,
-							})
-						: null;
+					originalItemContent !== null ? makeMergeExtension(originalItemContent) : null;
+
 				editor.dispatch({
 					effects: [diffExtensionCompartment.reconfigure(mergeExtension ? [mergeExtension] : [])],
 				});

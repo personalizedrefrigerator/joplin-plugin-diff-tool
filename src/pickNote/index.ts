@@ -1,14 +1,16 @@
 import joplin from 'api';
 import {
+	NoteSearchResult,
 	WebViewMessage,
 	WebViewMessageType,
 	WebViewResponse,
 	WebViewResponseType,
 } from './messaging';
 import { ViewHandle } from 'api/types';
+import noteLinkToId from '../utils/noteLinkToId';
 
 let dialogHandle: ViewHandle | null = null;
-const pickNote = async () => {
+const pickNote = async (currentNoteId?: string) => {
 	const dialog = dialogHandle ?? (await joplin.views.dialogs.create('diff-dialog'));
 	dialogHandle = dialog;
 
@@ -33,27 +35,67 @@ const pickNote = async () => {
 				]);
 				return null;
 			} else if (message.type === WebViewMessageType.SearchNotes) {
+				const query = message.query;
 				const results = await joplin.data.get(['search'], {
 					query: message.query,
 					fields: ['id', 'title'],
 					page: message.cursor,
 				});
-				console.warn('results', results);
 
-				return {
-					type: WebViewResponseType.NoteList,
-					results: results.items.map((item: any) => ({
+				let resultList: NoteSearchResult[] = [];
+
+				if ((message.cursor ?? 0) === 0) {
+					const id = noteLinkToId(query);
+					if (id) {
+						const note = await joplin.data.get(['notes', id]);
+						resultList.push({
+							title: note.title,
+							id: note.id,
+							description: null,
+						});
+					}
+				}
+
+				resultList = resultList.concat(
+					results.items.map((item: any) => ({
 						id: item.id,
 						title: item.title,
 						description: '',
 					})),
+				);
+
+				return {
+					type: WebViewResponseType.NoteList,
+					results: resultList,
 					hasMore: results.has_more,
 					cursor: (message.cursor ?? 0) + 1,
 				};
 			} else if (message.type === WebViewMessageType.GetDefaultSuggestions) {
+				const defaultChoices: NoteSearchResult[] = [
+					{ title: 'None', id: '', description: 'Chooses no notes.' },
+				];
+
+				// Include original notes, if a conflict.
+				if (currentNoteId) {
+					const currentNote = await joplin.data.get(['notes', currentNoteId], {
+						fields: ['title', 'id', 'conflict_original_id'],
+						include_deleted: 1,
+					});
+					if (currentNote && currentNote.conflict_original_id) {
+						const original = await joplin.data.get(['notes', currentNote.conflict_original_id]);
+						if (original) {
+							defaultChoices.push({
+								title: original.title,
+								id: original.id,
+								description: 'Original note for this conflict.',
+							});
+						}
+					}
+				}
+
 				return {
 					type: WebViewResponseType.NoteList,
-					results: [{ title: 'None', id: '', description: 'Chooses no notes.' }],
+					results: defaultChoices,
 					hasMore: false,
 				};
 			}

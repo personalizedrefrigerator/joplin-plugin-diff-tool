@@ -2,15 +2,62 @@ import joplin from 'api';
 import { ContentScriptType, ModelType, ToolbarButtonLocation } from 'api/types';
 import pickNote from './pickNote';
 
+const showDiffWithIdKey = 'show-diff-with-id';
+
+const setShowDiffWithId = async (currentNoteId: string, otherNoteId: string | null) => {
+	let diffContent: string | null;
+	if (otherNoteId) {
+		await joplin.data.userDataSet(ModelType.Note, currentNoteId, showDiffWithIdKey, otherNoteId);
+		const note = await joplin.data.get(['notes', otherNoteId], { fields: ['body'] });
+		diffContent = note.body;
+	} else {
+		await joplin.data.userDataDelete(ModelType.Note, currentNoteId, showDiffWithIdKey);
+		diffContent = null;
+	}
+	await joplin.commands.execute('editor.execCommand', {
+		name: 'cm6-show-diff-with',
+		args: [diffContent],
+	});
+};
+
+const getNoteIdToDiffWith = async (currentNoteId: string) => {
+	const mergeNoteId = await joplin.data.userDataGet(
+		ModelType.Note,
+		currentNoteId,
+		showDiffWithIdKey,
+	);
+	if (!mergeNoteId || typeof mergeNoteId !== 'string') {
+		return null;
+	}
+	return mergeNoteId;
+};
+
+const getContentToDiffWith = async (currentNoteId: string) => {
+	const mergeNoteId = await getNoteIdToDiffWith(currentNoteId);
+	if (!mergeNoteId) {
+		return null;
+	}
+
+	const mergeNoteContent = await joplin.data.get(['notes', mergeNoteId], {
+		fields: ['body'],
+	});
+	return mergeNoteContent.body;
+};
+
 joplin.plugins.register({
 	onStart: async function () {
 		let selectedNoteId: string | null = null;
-		await joplin.workspace.onNoteSelectionChange((event: { value: string[] }) => {
+		await joplin.workspace.onNoteSelectionChange(async (event: { value: string[] }) => {
 			const ids = event.value;
 			if (ids.length !== 1) {
 				selectedNoteId = null;
 			} else {
 				selectedNoteId = ids[0];
+
+				await joplin.commands.execute('editor.execCommand', {
+					name: 'cm6-show-diff-with',
+					args: [await getContentToDiffWith(selectedNoteId)],
+				});
 			}
 		});
 
@@ -22,39 +69,11 @@ joplin.plugins.register({
 		);
 		await joplin.contentScripts.onMessage(contentScriptId, async (message: string) => {
 			if (message === 'getMergeContent' && selectedNoteId) {
-				const mergeNoteId = await joplin.data.userDataGet(
-					ModelType.Note,
-					selectedNoteId,
-					'diff-with',
-				);
-				if (!mergeNoteId || typeof mergeNoteId !== 'string') {
-					return null;
-				}
-
-				const mergeNoteContent = await joplin.data.get(['notes', mergeNoteId], {
-					fields: ['body'],
-				});
-				return mergeNoteContent.body;
+				return await getContentToDiffWith(selectedNoteId);
 			}
 
 			return null;
 		});
-
-		const showDiffWith = async (noteId: string | null) => {
-			let diffContent: string | null;
-			if (noteId) {
-				await joplin.data.userDataSet(ModelType.Note, selectedNoteId, 'diff-with', noteId);
-				const note = await joplin.data.get(['notes', noteId], { fields: ['body'] });
-				diffContent = note.body;
-			} else {
-				await joplin.data.userDataDelete(ModelType.Note, selectedNoteId, 'diff-with');
-				diffContent = null;
-			}
-			await joplin.commands.execute('editor.execCommand', {
-				name: 'cm6-show-diff-with',
-				args: [diffContent],
-			});
-		};
 
 		await joplin.commands.register({
 			name: 'showDiffWithNote',
@@ -63,13 +82,13 @@ joplin.plugins.register({
 			execute: async () => {
 				if (!selectedNoteId) return;
 
-				const noteId = await pickNote();
+				const noteId = await pickNote(selectedNoteId);
 				if (!selectedNoteId || noteId === null) {
 					console.warn('No note selected.');
 					return;
 				}
 
-				await showDiffWith(noteId);
+				await setShowDiffWithId(selectedNoteId, noteId);
 			},
 		});
 		await joplin.views.toolbarButtons.create(
