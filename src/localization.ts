@@ -16,7 +16,7 @@ const defaultStrings: AppLocalization = {
 	noteSelect__conflictOriginalNote: 'Chooses no notes.',
 	noteSelect__cancel: 'Cancel',
 	betaWarning:
-		'Warning: Due to occasional crashes related to @codemirror/merge, this plugin is considered to be in beta.',
+		'Warning: Due to occasional crashes related to syntax highlighting and @codemirror/merge, this plugin is in beta.',
 };
 
 const localizations: Record<string, AppLocalization> = {
