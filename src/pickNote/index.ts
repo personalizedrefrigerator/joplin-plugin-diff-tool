@@ -48,12 +48,20 @@ const pickNote = async (currentNoteId?: string) => {
 				if ((message.cursor ?? 0) === 0) {
 					const id = noteLinkToId(query);
 					if (id) {
-						const note = await joplin.data.get(['notes', id]);
-						resultList.push({
-							title: note.title,
-							id: note.id,
-							description: null,
-						});
+						let note;
+						try {
+							note = await joplin.data.get(['notes', id]);
+						} catch (error) {
+							console.warn('Failed to get note from ID', error);
+						}
+
+						if (note) {
+							resultList.push({
+								title: note.title,
+								id: note.id,
+								description: null,
+							});
+						}
 					}
 				}
 
@@ -87,7 +95,13 @@ const pickNote = async (currentNoteId?: string) => {
 						include_deleted: 1,
 					});
 					if (currentNote && currentNote.conflict_original_id) {
-						const original = await joplin.data.get(['notes', currentNote.conflict_original_id]);
+						let original;
+						try {
+							original = await joplin.data.get(['notes', currentNote.conflict_original_id]);
+						} catch (error) {
+							console.warn('Failed to find the original note for a conflict:', error);
+						}
+
 						if (original) {
 							defaultChoices.push({
 								title: original.title,
