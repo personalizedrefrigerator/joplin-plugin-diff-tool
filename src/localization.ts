@@ -13,7 +13,7 @@ const defaultStrings: AppLocalization = {
 	noteSearch__search: 'Search:',
 	noteSelect__none: 'None',
 	noteSelect__chooseNoNotes: 'Chooses no notes.',
-	noteSelect__conflictOriginalNote: 'Chooses no notes.',
+	noteSelect__conflictOriginalNote: 'The original note for this conflict.',
 	noteSelect__cancel: 'Cancel',
 	betaWarning:
 		'Warning: Due to occasional crashes related to syntax highlighting and @codemirror/merge, this plugin is in beta.',
