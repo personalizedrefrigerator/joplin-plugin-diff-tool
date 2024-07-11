@@ -1,6 +1,6 @@
 # Joplin Plugin Diff View
 
-This plugin shows a diff that can be used to compare the content of related notes and to resolve conflicts.
+This plugin uses [`@codemirror/merge`](https://github.com/codemirror/merge) to show a diff that can be used to compare the content of related notes and to resolve conflicts.
 
 At present, it only supports the mobile and desktop beta markdown editors.
 
