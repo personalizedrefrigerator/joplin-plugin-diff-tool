@@ -28,6 +28,6 @@ To compare the current note with another:
 To stop comparing with another note:
 
 1. Click "compare" (<img alt="branch icon" src="./images/compare-button.png" width="32"/>).
-2. Click "None".
-   ![screenshot: Select a note to compare with, "none" circled.](./images/compare-with-no-notes.png)
+2. Click "None".  
+   <img alt="screenshot: Select a note to compare with, 'none' circled." src="./images/compare-with-no-notes.png" width="500"/>
 3. Click "OK".
