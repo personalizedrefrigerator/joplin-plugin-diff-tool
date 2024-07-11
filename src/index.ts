@@ -38,10 +38,15 @@ const getContentToDiffWith = async (currentNoteId: string) => {
 		return null;
 	}
 
-	const mergeNoteContent = await joplin.data.get(['notes', mergeNoteId], {
-		fields: ['body'],
-	});
-	return mergeNoteContent.body;
+	try {
+		const mergeNoteContent = await joplin.data.get(['notes', mergeNoteId], {
+			fields: ['body'],
+		});
+		return mergeNoteContent.body;
+	} catch (error) {
+		console.warn('Failed to load note to diff with', error);
+		return null;
+	}
 };
 
 joplin.plugins.register({

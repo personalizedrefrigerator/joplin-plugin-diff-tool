@@ -1,5 +1,5 @@
 import { ContentScriptContext, MarkdownEditorContentScriptModule } from 'api/types';
-import { Compartment, EditorState, Extension } from '@codemirror/state';
+import { Compartment, Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { unifiedMergeView } from '@codemirror/merge';
 
