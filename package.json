@@ -1,6 +1,6 @@
 {
 	"name": "joplin-plugin-diff-view",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"scripts": {
 		"dist": "webpack --env joplin-plugin-config=buildMain && webpack --env joplin-plugin-config=buildExtraScripts && webpack --env joplin-plugin-config=createArchive",
 		"prepare": "npm run dist",
@@ -13,7 +13,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/personalizedrefrigerator/joplin-plugin-extra-cm6-settings"
+		"url": "https://github.com/personalizedrefrigerator/joplin-plugin-diff-tool"
 	},
 	"license": "MIT",
 	"keywords": [
@@ -45,6 +45,5 @@
 		"typescript": "^5.2.2",
 		"webpack": "^5.88.2",
 		"webpack-cli": "^5.1.4"
-	},
-	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+	}
 }

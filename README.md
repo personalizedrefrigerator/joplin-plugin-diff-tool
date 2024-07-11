@@ -4,12 +4,30 @@ This plugin shows a diff that can be used to compare the content of related note
 
 At present, it only supports the mobile and desktop beta markdown editors.
 
-# Status
+> [!WARNING]
+>
+> Due to occasional crashes related to interactions between syntax highlighting and `@codemirror/merge`, this plugin should be considered to be **in beta**.
 
-This plugin is a work in progress. These tasks need to be completed before it is ready for release:
-- [ ] Improve the "compare with" UI.
-   - [ ] Suggest comparing with conflict notes, if any exist.
-   - [ ] Suggest comparing with the last visited note, if it exists.
-   - [ ] Improve styling.
-- [ ] Documentation.
-- [ ] Test on desktop and Android.
+## Desktop setup
+
+On desktop, be sure that the beta markdown editor is enabled. To do this, go to settings > general, then check "opt-in to the editor beta".
+
+This plugin does not support the Rich Text Editor.
+
+## Usage
+
+This plugin adds a "compare" button to the desktop and mobile markdown toolbars.
+
+To compare the current note with another:
+
+1. Click "compare" (<img alt="branch icon" src="./images/compare-button.png" width="32"/>).
+2. Search for a note ID, note title, or content.
+   - The search bar supports the same search syntax as Joplin.
+3. Click "OK".
+
+To stop comparing with another note:
+
+1. Click "compare" (<img alt="branch icon" src="./images/compare-button.png" width="32"/>).
+2. Click "None".
+   ![screenshot: Select a note to compare with, "none" circled.](./images/compare-with-no-notes.png)
+3. Click "OK".

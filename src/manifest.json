@@ -6,14 +6,14 @@
 	"name": "Diff view",
 	"description": "Shows differences between notes.",
 	"author": "Henry Heino",
-	"homepage_url": "https://github.com/personalizedrefrigerator/joplin-plugin-extra-cm6-settings",
-	"repository_url": "https://github.com/personalizedrefrigerator/joplin-plugin-extra-cm6-settings",
+	"homepage_url": "https://github.com/personalizedrefrigerator/joplin-plugin-diff-tool",
+	"repository_url": "https://github.com/personalizedrefrigerator/joplin-plugin-diff-tool",
 	"keywords": ["codemirror", "diff"],
-	"categories": ["editor"],
+	"categories": ["editor", "productivity"],
 	"screenshots": [
 		{
 			"src": "images/screenshot.png",
-			"label": "Screenshot: Shows line numbers, autocomplete, and folding in use"
+			"label": "Screenshot: Shows a diff between parts of a file, with an 'accept' button."
 		}
 	],
 	"icons": {},
