@@ -24,6 +24,12 @@ body {
 .main-content {
 	display: flex;
 	flex-grow: 1;
+	flex-direction: column;
+}
+
+.beta-warning {
+	background-color: var(--joplin-warning-background-color);
+	padding: 2px;
 }
 
 .note-picker {

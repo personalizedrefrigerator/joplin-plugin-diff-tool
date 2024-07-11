@@ -1,4 +1,5 @@
 import { WebViewMessage, WebViewMessageType, WebViewResponse } from '../messaging';
+import makeBetaWarning from './components/makeBetaWarning';
 import makeNoteInput from './components/makeNoteInput';
 
 type WebViewAPI = {
@@ -14,6 +15,6 @@ declare const webviewApi: WebViewAPI;
 		webviewApi.postMessage({ type: WebViewMessageType.OnNoteSelected, noteId: id });
 	});
 
-	container.replaceChildren(noteInput);
+	container.replaceChildren(noteInput, makeBetaWarning());
 	(document.querySelector('#joplin-plugin-content') ?? document.body).appendChild(container);
 })();
