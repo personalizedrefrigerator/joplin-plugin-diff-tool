@@ -4,7 +4,7 @@
 	"app_min_version": "3.0",
 	"version": "0.0.3",
 	"name": "Diff view",
-	"description": "Shows differences between notes.",
+	"description": "Shows differences between and allows merging notes. This plugin can be used to resolve conflicts.",
 	"author": "Henry Heino",
 	"homepage_url": "https://github.com/personalizedrefrigerator/joplin-plugin-diff-tool",
 	"repository_url": "https://github.com/personalizedrefrigerator/joplin-plugin-diff-tool",
@@ -16,6 +16,8 @@
 			"label": "Screenshot: Shows a diff between parts of a file, with an 'accept' button."
 		}
 	],
-	"icons": {},
+	"icons": {
+		"128": "images/icon-128.png"
+	},
 	"platforms": ["mobile", "desktop"]
 }
