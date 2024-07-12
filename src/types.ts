@@ -1,10 +1,5 @@
-export interface PluginSettings {
-	lineNumbers: boolean;
-	codeFolding: boolean;
-	enableAutocomplete: boolean;
-
-	highlightActiveLine: boolean;
-	highlightActiveLineGutter: boolean;
-	highlightSpaces: boolean;
-	highlightTrailingSpaces: boolean;
+interface MergeSource {
+	content: string;
+	title: string;
+	id: string;
 }

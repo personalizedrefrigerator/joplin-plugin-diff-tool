@@ -1,7 +1,8 @@
 import { ContentScriptContext, MarkdownEditorContentScriptModule } from 'api/types';
-import { Compartment, Extension } from '@codemirror/state';
+import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { unifiedMergeView } from '@codemirror/merge';
+import { MainProcessApi } from './types';
+import makeMergeExtension from './utils/makeMergeExtension';
 
 export default (context: ContentScriptContext): MarkdownEditorContentScriptModule => {
 	return {
@@ -12,30 +13,31 @@ export default (context: ContentScriptContext): MarkdownEditorContentScriptModul
 			const diffExtensionCompartment = new Compartment();
 			editorControl.addExtension([diffExtensionCompartment.of([])]);
 
-			const makeMergeExtension = (originalItemContent: string): Extension => {
-				return [
-					unifiedMergeView({
-						original: originalItemContent,
-					}),
-				];
+			const mainProcessApi: MainProcessApi = {
+				goToNote(id: string) {
+					void context.postMessage({ navigateToId: id });
+				},
+				stopMerge() {
+					void context.postMessage('stopMerge');
+				},
 			};
 
-			const updateMergeView = (originalItemContent: string | null) => {
+			const updateMergeView = (originalItem: MergeSource | null) => {
 				const mergeExtension =
-					originalItemContent !== null ? makeMergeExtension(originalItemContent) : null;
+					originalItem !== null ? makeMergeExtension(originalItem, mainProcessApi) : null;
 
 				editor.dispatch({
 					effects: [diffExtensionCompartment.reconfigure(mergeExtension ? [mergeExtension] : [])],
 				});
 			};
 
-			editorControl.registerCommand('cm6-show-diff-with', (itemContent: string | null) => {
-				if (itemContent !== null) {
+			editorControl.registerCommand('cm6-show-diff-with', (originalItem: MergeSource | null) => {
+				if (originalItem !== null) {
 					// The merge view needs to be cleared before it can be used again.
 					updateMergeView(null);
 				}
 
-				updateMergeView(itemContent);
+				updateMergeView(originalItem);
 			});
 			updateMergeView(await context.postMessage('getMergeContent'));
 		},

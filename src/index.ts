@@ -4,12 +4,20 @@ import pickNote from './pickNote';
 
 const showDiffWithIdKey = 'show-diff-with-id';
 
+const loadNoteAsMergeSource = async (id: string): Promise<MergeSource> => {
+	const note = await joplin.data.get(['notes', id], { fields: ['body', 'title'] });
+	return {
+		content: note.body,
+		title: note.title,
+		id,
+	};
+};
+
 const setShowDiffWithId = async (currentNoteId: string, otherNoteId: string | null) => {
-	let diffContent: string | null;
+	let diffContent: MergeSource | null;
 	if (otherNoteId) {
 		await joplin.data.userDataSet(ModelType.Note, currentNoteId, showDiffWithIdKey, otherNoteId);
-		const note = await joplin.data.get(['notes', otherNoteId], { fields: ['body'] });
-		diffContent = note.body;
+		diffContent = await loadNoteAsMergeSource(otherNoteId);
 	} else {
 		await joplin.data.userDataDelete(ModelType.Note, currentNoteId, showDiffWithIdKey);
 		diffContent = null;
@@ -32,17 +40,14 @@ const getNoteIdToDiffWith = async (currentNoteId: string) => {
 	return mergeNoteId;
 };
 
-const getContentToDiffWith = async (currentNoteId: string) => {
+const getContentToDiffWith = async (currentNoteId: string): Promise<MergeSource | null> => {
 	const mergeNoteId = await getNoteIdToDiffWith(currentNoteId);
 	if (!mergeNoteId) {
 		return null;
 	}
 
 	try {
-		const mergeNoteContent = await joplin.data.get(['notes', mergeNoteId], {
-			fields: ['body'],
-		});
-		return mergeNoteContent.body;
+		return loadNoteAsMergeSource(mergeNoteId);
 	} catch (error) {
 		console.warn('Failed to load note to diff with', error);
 		return null;
@@ -72,9 +77,13 @@ joplin.plugins.register({
 			contentScriptId,
 			'./contentScript/contentScript.js',
 		);
-		await joplin.contentScripts.onMessage(contentScriptId, async (message: string) => {
+		await joplin.contentScripts.onMessage(contentScriptId, async (message: unknown) => {
 			if (message === 'getMergeContent' && selectedNoteId) {
 				return await getContentToDiffWith(selectedNoteId);
+			} else if (message === 'stopMerge') {
+				await setShowDiffWithId(selectedNoteId, '');
+			} else if (typeof message === 'object' && 'navigateToId' in message) {
+				await joplin.commands.execute('openNote', message.navigateToId);
 			}
 
 			return null;

@@ -1,4 +1,6 @@
 interface AppLocalization {
+	merge__comparingWith: string;
+	merge__stop: string;
 	noteSearch__loadMore: string;
 	noteSearch__search: string;
 	noteSelect__none: string;
@@ -9,6 +11,8 @@ interface AppLocalization {
 }
 
 const defaultStrings: AppLocalization = {
+	merge__comparingWith: 'Comparing with: ',
+	merge__stop: 'Stop',
 	noteSearch__loadMore: 'Load more',
 	noteSearch__search: 'Search:',
 	noteSelect__none: 'None',
