@@ -13,6 +13,17 @@ const loadNoteAsMergeSource = async (id: string): Promise<MergeSource> => {
 	};
 };
 
+const showDiffWithContent = async (diffContent: MergeSource) => {
+	try {
+		await joplin.commands.execute('editor.execCommand', {
+			name: 'cm6-show-diff-with',
+			args: [diffContent],
+		});
+	} catch (error) {
+		console.info('Failed to show diff:', error, '. Is the editor open?');
+	}
+};
+
 const setShowDiffWithId = async (currentNoteId: string, otherNoteId: string | null) => {
 	let diffContent: MergeSource | null;
 	if (otherNoteId) {
@@ -22,10 +33,7 @@ const setShowDiffWithId = async (currentNoteId: string, otherNoteId: string | nu
 		await joplin.data.userDataDelete(ModelType.Note, currentNoteId, showDiffWithIdKey);
 		diffContent = null;
 	}
-	await joplin.commands.execute('editor.execCommand', {
-		name: 'cm6-show-diff-with',
-		args: [diffContent],
-	});
+	await showDiffWithContent(diffContent);
 };
 
 const getNoteIdToDiffWith = async (currentNoteId: string) => {
@@ -64,10 +72,7 @@ joplin.plugins.register({
 			} else {
 				selectedNoteId = ids[0];
 
-				await joplin.commands.execute('editor.execCommand', {
-					name: 'cm6-show-diff-with',
-					args: [await getContentToDiffWith(selectedNoteId)],
-				});
+				await showDiffWithContent(await getContentToDiffWith(selectedNoteId));
 			}
 		});
 
