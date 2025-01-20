@@ -13,7 +13,11 @@ const loadNoteAsMergeSource = async (id: string): Promise<MergeSource> => {
 	};
 };
 
-const showDiffWithContent = async (diffContent: MergeSource) => {
+let lastDiffContent: MergeSource | null = null;
+const showDiffWithContent = async (diffContent: MergeSource | null) => {
+	if (diffContent === lastDiffContent) return;
+	lastDiffContent = diffContent;
+
 	try {
 		await joplin.commands.execute('editor.execCommand', {
 			name: 'cm6-show-diff-with',
