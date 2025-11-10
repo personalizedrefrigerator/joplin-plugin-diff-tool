@@ -1,5 +1,5 @@
 import { ContentScriptContext, MarkdownEditorContentScriptModule } from 'api/types';
-import { Compartment, EditorState, Facet } from '@codemirror/state';
+import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { MainProcessApi } from './types';
 import makeMergeExtension from './utils/makeMergeExtension';
@@ -31,6 +31,15 @@ export default (context: ContentScriptContext): MarkdownEditorContentScriptModul
 					effects: [diffExtensionCompartment.reconfigure(mergeExtension ? [mergeExtension] : [])],
 				});
 			};
+
+			editorControl.registerCommand('cm6-show-diff-with', (originalItem: MergeSource | null) => {
+				if (originalItem !== null) {
+					// The merge view needs to be cleared before it can be used again.
+					updateMergeView(null);
+				}
+
+				updateMergeView(originalItem);
+			});
 
 			const requestUpdateMergeView = async () => {
 				updateMergeView(await context.postMessage('getMergeContent'));
