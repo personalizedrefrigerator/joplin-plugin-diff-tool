@@ -79,6 +79,10 @@ body {
 		border-color: var(--joplin-code-border-color);
 	}
 
+	&:focus-within {
+		outline: 1px solid var(--joplin-focus-outline-color, orange);
+	}
+
 	> .description {
 		font-style: italic;
 		opacity: 0.9;
