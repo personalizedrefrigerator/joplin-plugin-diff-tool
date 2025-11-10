@@ -104,6 +104,13 @@ joplin.plugins.register({
 			iconName: 'fas fa-code-branch',
 			enabledCondition: 'markdownEditorPaneVisible',
 			execute: async (noteIds: string[] = []) => {
+				if (noteIds.length > 2) {
+					void joplin.views.dialogs.showToast({
+						message:
+							'Comparing more than two notes is unsupported. Only the first two notes will be compared.',
+					});
+				}
+
 				const noteIdSource = noteIds[0] ?? selectedNoteIds[0];
 				if (!noteIdSource) {
 					console.warn('No source note ID.');
