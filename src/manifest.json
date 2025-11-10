@@ -2,7 +2,7 @@
 	"manifest_version": 1,
 	"id": "io.github.personalizedrefrigerator.diff-view",
 	"app_min_version": "3.4.0",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"name": "Diff view",
 	"description": "Shows differences between notes. This plugin can be used to resolve conflicts and compare related notes.",
 	"author": "Henry Heino",
