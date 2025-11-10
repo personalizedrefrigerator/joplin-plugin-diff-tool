@@ -1,18 +1,13 @@
 # Joplin Plugin Diff View
 
+A plugin for [Joplin](https://joplinapp.org/) that adds support for comparing notes in the note editor.
+
 This plugin uses [`@codemirror/merge`](https://github.com/codemirror/merge) to show a diff that can be used to compare the content of related notes and to resolve conflicts.
-
-At present, it only supports the mobile and desktop beta markdown editors.
-
-> [!WARNING]
->
-> Due to occasional crashes related to interactions between syntax highlighting and `@codemirror/merge`, this plugin should be considered to be **in beta**.
 
 ## Desktop setup
 
-On desktop, be sure that the beta markdown editor is enabled. To do this, go to settings > general, then check "opt-in to the editor beta".
-
-This plugin does not support the Rich Text Editor.
+- This plugin does not support the Rich Text Editor.
+- On desktop, be sure that the legacy Markdown editor is disabled. To do this, go to settings > general > advanced, then uncheck the "legacy Markdown editor" setting.
 
 ## Usage
 

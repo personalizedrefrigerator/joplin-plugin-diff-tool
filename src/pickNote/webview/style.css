@@ -27,11 +27,6 @@ body {
 	flex-direction: column;
 }
 
-.beta-warning {
-	background-color: var(--joplin-warning-background-color);
-	padding: 2px;
-}
-
 .note-picker {
 	display: flex;
 	flex-direction: column;
