@@ -1,5 +1,5 @@
 import joplin from 'api';
-import { ContentScriptType, ModelType, ToolbarButtonLocation } from 'api/types';
+import { ContentScriptType, MenuItemLocation, ModelType, ToolbarButtonLocation } from 'api/types';
 import pickNote from './pickNote';
 
 const showDiffWithIdKey = 'show-diff-with-id';
@@ -68,15 +68,11 @@ const getContentToDiffWith = async (currentNoteId: string): Promise<MergeSource 
 
 joplin.plugins.register({
 	onStart: async function () {
-		let selectedNoteId: string | null = null;
+		let selectedNoteIds: string[] = [];
 		await joplin.workspace.onNoteSelectionChange(async (event: { value: string[] }) => {
-			const ids = event.value;
-			if (ids.length !== 1) {
-				selectedNoteId = null;
-			} else {
-				selectedNoteId = ids[0];
-
-				await showDiffWithContent(await getContentToDiffWith(selectedNoteId));
+			selectedNoteIds = [...event.value];
+			if (selectedNoteIds.length === 1) {
+				await showDiffWithContent(await getContentToDiffWith(selectedNoteIds[0]));
 			}
 		});
 
@@ -87,10 +83,10 @@ joplin.plugins.register({
 			'./contentScript/contentScript.js',
 		);
 		await joplin.contentScripts.onMessage(contentScriptId, async (message: unknown) => {
-			if (message === 'getMergeContent' && selectedNoteId) {
-				return await getContentToDiffWith(selectedNoteId);
+			if (message === 'getMergeContent' && selectedNoteIds.length) {
+				return await getContentToDiffWith(selectedNoteIds[0]);
 			} else if (message === 'stopMerge') {
-				await setShowDiffWithId(selectedNoteId, '');
+				await setShowDiffWithId(selectedNoteIds[0], '');
 			} else if (typeof message === 'object' && 'navigateToId' in message) {
 				await joplin.commands.execute('openNote', message.navigateToId);
 			}
@@ -100,24 +96,38 @@ joplin.plugins.register({
 
 		await joplin.commands.register({
 			name: 'showDiffWithNote',
-			label: 'Compare the current note with another',
+			label: 'Compare notes',
 			iconName: 'fas fa-code-branch',
-			execute: async () => {
-				if (!selectedNoteId) return;
-
-				const noteId = await pickNote(selectedNoteId);
-				if (!selectedNoteId || noteId === null) {
-					console.warn('No note selected.');
+			enabledCondition: 'markdownEditorPaneVisible',
+			execute: async (noteIds: string[] = []) => {
+				const noteIdSource = noteIds[0] ?? selectedNoteIds[0];
+				if (!noteIdSource) {
+					console.warn('No source note ID.');
 					return;
 				}
 
-				await setShowDiffWithId(selectedNoteId, noteId);
+				const noteIdDest = noteIds[1] ?? selectedNoteIds[1] ?? (await pickNote(noteIdSource));
+				if (!noteIdDest) {
+					console.warn('No destination note ID.');
+					return;
+				}
+
+				if (selectedNoteIds.length > 1) {
+					await joplin.commands.execute('openNote', noteIdSource);
+				}
+				await setShowDiffWithId(noteIdSource, noteIdDest);
 			},
 		});
 		await joplin.views.toolbarButtons.create(
 			'show-diff-with',
 			'showDiffWithNote',
 			ToolbarButtonLocation.EditorToolbar,
+		);
+
+		await joplin.views.menuItems.create(
+			'diff.diff-compare',
+			'showDiffWithNote',
+			MenuItemLocation.NoteListContextMenu,
 		);
 	},
 });
