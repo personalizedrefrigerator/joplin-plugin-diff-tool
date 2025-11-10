@@ -71,9 +71,6 @@ joplin.plugins.register({
 		let selectedNoteIds: string[] = [];
 		await joplin.workspace.onNoteSelectionChange(async (event: { value: string[] }) => {
 			selectedNoteIds = [...event.value];
-			if (selectedNoteIds.length === 1) {
-				await showDiffWithContent(await getContentToDiffWith(selectedNoteIds[0]));
-			}
 		});
 
 		const contentScriptId = 'cm6-diff-view';
