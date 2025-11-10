@@ -26,6 +26,7 @@ export interface Command {
 	/**
 	 * Code to be ran when the command is executed. It may return a result.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	execute(...args: any[]): Promise<any | void>;
 
 	/**
@@ -43,9 +44,9 @@ export interface Command {
 	 * Or | \|\| | "noteIsTodo \|\| noteTodoCompleted"
 	 * And | && | "oneNoteSelected && !inConflictFolder"
 	 *
-	 * Joplin, unlike VSCode, also supports parenthesis, which allows creating
+	 * Joplin, unlike VSCode, also supports parentheses, which allows creating
 	 * more complex expressions such as `cond1 || (cond2 && cond3)`. Only one
-	 * level of parenthesis is possible (nested ones aren't supported).
+	 * level of parentheses is possible (nested ones aren't supported).
 	 *
 	 * Currently the supported context variables aren't documented, but you can
 	 * find the list below:
@@ -115,11 +116,13 @@ export interface ExportModule {
 	/**
 	 * Called when an item needs to be processed. An "item" can be any Joplin object, such as a note, a folder, a notebook, etc.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	onProcessItem(context: ExportContext, itemType: number, item: any): Promise<void>;
 
 	/**
 	 * Called when a resource file needs to be exported.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	onProcessResource(context: ExportContext, resource: any, filePath: string): Promise<void>;
 
 	/**
@@ -183,11 +186,13 @@ export interface ExportContext {
 	/**
 	 * You can attach your own custom data using this property - it will then be passed to each event handler, allowing you to keep state from one event to the next.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	userData?: any;
 }
 
 export interface ImportContext {
 	sourcePath: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	options: any;
 	warnings: string[];
 }
@@ -197,6 +202,7 @@ export interface ImportContext {
 // =================================================================
 
 export interface Script {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	onStart?(event: any): Promise<void>;
 }
 
@@ -302,6 +308,7 @@ export interface MenuItem {
 	 * Arguments that should be passed to the command. They will be as rest
 	 * parameters.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	commandArgs?: any[];
 
 	/**
@@ -340,6 +347,8 @@ export type ButtonId = string;
 export enum ToolbarButtonLocation {
 	/**
 	 * This toolbar in the top right corner of the application. It applies to the note as a whole, including its metadata.
+	 *
+	 * <span class="platform-desktop">desktop</span>
 	 */
 	NoteToolbar = 'noteToolbar',
 
@@ -353,12 +362,27 @@ export type ViewHandle = string;
 
 export interface EditorCommand {
 	name: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	value?: any;
 }
 
 export interface DialogResult {
 	id: ButtonId;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	formData?: any;
+}
+
+export enum ToastType {
+	Info = 'info',
+	Success = 'success',
+	Error = 'error',
+}
+
+export interface Toast {
+	message: string;
+	type?: ToastType;
+	duration?: number;
+	timestamp?: number;
 }
 
 export interface Size {
@@ -371,6 +395,73 @@ export interface Rectangle {
 	y?: number;
 	width?: number;
 	height?: number;
+}
+
+export interface EditorUpdateEvent {
+	newBody: string;
+	noteId: string;
+}
+export type UpdateCallback = (event: EditorUpdateEvent)=> Promise<void>;
+
+
+export interface ActivationCheckEvent {
+	handle: ViewHandle;
+	noteId: string;
+}
+export type ActivationCheckCallback = (event: ActivationCheckEvent)=> Promise<boolean>;
+
+/**
+ * Required callbacks for creating an editor plugin.
+ */
+export interface EditorPluginCallbacks {
+	/**
+	 * Emitted when the editor can potentially be activated - this is for example when the current
+	 * note is changed, or when the application is opened. At that point you should check the
+	 * current note and decide whether your editor should be activated or not. If it should, return
+	 * `true`, otherwise return `false`.
+	 */
+	onActivationCheck: ActivationCheckCallback;
+
+	/**
+	 * Emitted when an editor view is created. This happens, for example, when a new window containing
+	 * a new editor is created.
+	 *
+	 * This callback should set the editor plugin's HTML using `editors.setHtml`, add scripts to the editor
+	 * with `editors.addScript`, and optionally listen for external changes using `editors.onUpdate`.
+	 */
+	onSetup: (handle: ViewHandle)=> Promise<void>;
+}
+
+export type VisibleHandler = ()=> Promise<void>;
+
+export interface EditContextMenuFilterObject {
+	items: MenuItem[];
+}
+
+export interface EditorActivationCheckFilterObject {
+	effectiveNoteId: string;
+	windowId: string;
+	activatedEditors: {
+		pluginId: string;
+		viewId: string;
+		isActive: boolean;
+	}[];
+}
+
+export type FilterHandler<T> = (object: T)=> Promise<T>;
+
+export type CommandArgument = string|number|object|boolean|null;
+
+export interface MenuTemplateItem {
+	label?: string;
+	command?: string;
+	commandArgs?: CommandArgument[];
+}
+
+export interface WebviewApi {
+	postMessage: (message: object)=> unknown;
+	onMessage: (message: object)=> void;
+	menuPopupFromTemplate: (template: MenuTemplateItem[])=> void;
 }
 
 // =================================================================
@@ -406,6 +497,7 @@ export enum SettingStorage {
 // Redefine a simplified interface to mask internal details
 // and to remove function calls as they would have to be async.
 export interface SettingItem {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	value: any;
 	type: SettingItemType;
 
@@ -442,6 +534,7 @@ export interface SettingItem {
 	 * This property is required when `isEnum` is `true`. In which case, it
 	 * should contain a map of value => label.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	options?: Record<any, any>;
 
 	/**
@@ -496,9 +589,34 @@ export interface SettingSection {
 export type Path = string[];
 
 // =================================================================
+// Clipboard API types
+// =================================================================
+
+/**
+ * Represents content that can be written to the clipboard in multiple formats.
+ */
+export interface ClipboardContent {
+	/**
+	 * Plain text representation of the content
+	 */
+	text?: string;
+
+	/**
+	 * HTML representation of the content
+	 */
+	html?: string;
+
+	/**
+	 * Image in [data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) format
+	 */
+	image?: string;
+}
+
+// =================================================================
 // Content Script types
 // =================================================================
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 export type PostMessageHandler = (message: any)=> Promise<any>;
 
 /**
@@ -522,30 +640,38 @@ export interface ContentScriptContext {
 }
 
 export interface ContentScriptModuleLoadedEvent {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	userData?: any;
 }
 
 export interface ContentScriptModule {
 	onLoaded?: (event: ContentScriptModuleLoadedEvent)=> void;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	plugin: ()=> any;
 	assets?: ()=> void;
 }
 
 export interface MarkdownItContentScriptModule extends Omit<ContentScriptModule, 'plugin'> {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	plugin: (markdownIt: any, options: any)=> any;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 type EditorCommandCallback = (...args: any[])=> any;
 
 export interface CodeMirrorControl {
 	/** Points to a CodeMirror 6 EditorView instance. */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	editor: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	cm6: any;
 
 	/** `extension` should be a [CodeMirror 6 extension](https://codemirror.net/docs/ref/#state.Extension). */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	addExtension(extension: any|any[]): void;
 
 	supportsCommand(name: string): boolean;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 	execCommand(name: string, ...args: any[]): any;
 	registerCommand(name: string, callback: EditorCommandCallback): void;
 
@@ -559,12 +685,35 @@ export interface CodeMirrorControl {
 		 *
 		 * Using `autocompletion({ override: [ ... ]})` causes errors when done by multiple plugins.
 		 */
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 		completionSource(completionSource: any): any;
 
 		/**
 		 * Creates an extension that enables or disables [`languageData`-based autocompletion](https://codemirror.net/docs/ref/#autocomplete.autocompletion^config.override).
 		 */
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Old code before rule was applied
 		enableLanguageDataAutocomplete: { of: (enabled: boolean)=> any };
+
+		/**
+		 * A CodeMirror [facet](https://codemirror.net/docs/ref/#state.EditorState.facet) that contains
+		 * the ID of the note currently open in the editor.
+		 *
+		 * Access the value of this facet using
+		 * ```ts
+		 * const noteIdFacet = editorControl.joplinExtensions.noteIdFacet;
+		 * const editorState = editorControl.editor.state;
+		 * const noteId = editorState.facet(noteIdFacet);
+		 * ```
+		 */
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- No better type available
+		noteIdFacet: any;
+		/**
+		 * A CodeMirror [StateEffect](https://codemirror.net/docs/ref/#state.StateEffect) that is
+		 * included in a [Transaction](https://codemirror.net/docs/ref/#state.Transaction) when the
+		 * note ID changes.
+		 */
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- No better type available
+		setNoteIdEffect: any;
 	};
 }
 

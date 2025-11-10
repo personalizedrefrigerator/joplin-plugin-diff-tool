@@ -88,6 +88,13 @@ joplin.plugins.register({
 			} else if (message === 'stopMerge') {
 				await setShowDiffWithId(selectedNoteIds[0], '');
 			} else if (typeof message === 'object' && 'navigateToId' in message) {
+				if (
+					typeof message.navigateToId !== 'string' ||
+					!message.navigateToId.match(/^[a-z0-9]{32}$/)
+				) {
+					throw new Error(`Invalid ID: ${message.navigateToId}`);
+				}
+
 				await joplin.commands.execute('openNote', message.navigateToId);
 			}
 
